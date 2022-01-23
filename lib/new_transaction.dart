@@ -1,12 +1,34 @@
-import 'package:expense_planner/user_transaction.dart';
 import 'package:flutter/material.dart';
 
-class NewTransaction extends StatelessWidget {
-  final title = TextEditingController();
-  final amount = TextEditingController();
+class NewTransaction extends StatefulWidget {
   final Function userTransaction;
 
   NewTransaction(this.userTransaction);
+
+  @override
+  State<NewTransaction> createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final title = TextEditingController();
+
+  final amount = TextEditingController();
+
+  void addTx() {
+    final enteredTitle = title.text;
+    final enteredAmount = double.parse(amount.text);
+
+    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+      return;
+    }
+
+    widget.userTransaction(
+      enteredTitle,
+      enteredAmount,
+    );
+
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +44,12 @@ class NewTransaction extends StatelessWidget {
                 controller: title),
             TextField(
               decoration: InputDecoration(labelText: "Amount"),
+              keyboardType: TextInputType.number,
+              onSubmitted: (_) => addTx(),
               controller: amount,
             ),
             FlatButton(
-              onPressed: () {
-                userTransaction(title.text, double.parse(amount.text));
-              },
+              onPressed: addTx,
               child: Text("Submit"),
               textColor: Colors.purple,
             ),
